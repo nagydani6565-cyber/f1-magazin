@@ -4,18 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grand Prix Insider | Professzionális F1 Hírportál</title>
-    <meta name="description" content="A legfrissebb Formula 1-es hírek, technikai elemzések és paddock pletykák közvetlenül a helyszínről.">
     <style>
-        :root {
-            --bg-color: #0c0d12;
-            --card-bg: #161920;
-            --text-main: #ffffff;
-            --text-muted: #a0a5b5;
-            --f1-red: #FF1801;
-            --border: #242936;
-        }
+        :root { --bg-color: #0c0d12; --card-bg: #161920; --text-main: #ffffff; --text-muted: #a0a5b5; --f1-red: #FF1801; --border: #242936; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; font-size: 17px; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: system-ui, sans-serif; line-height: 1.6; font-size: 17px; }
         header { background-color: #000000; border-bottom: 4px solid var(--f1-red); position: sticky; top: 0; z-index: 1000; }
         .nav-container { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
         .logo { font-size: 24px; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -1px; }
@@ -24,11 +16,12 @@
         .ad-banner { background: #0b0c10; border: 1px dashed #334155; padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px; margin-bottom: 30px; font-weight: bold; border-radius: 4px; }
         .sub-page { display: none; }
         #main-view { display: block; }
+        body:has(#cikk0:target) #main-view { display: none; }
         body:has(#cikk1:target) #main-view { display: none; }
         body:has(#cikk2:target) #main-view { display: none; }
         body:has(#cikk3:target) #main-view { display: none; }
         body:has(#cikk4:target) #main-view { display: none; }
-        #cikk1:target, #cikk2:target, #cikk3:target, #cikk4:target { display: block; }
+        #cikk0:target, #cikk1:target, #cikk2:target, #cikk3:target, #cikk4:target { display: block; }
         .news-card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }
         .card-body { padding: 25px; }
         .badge { background-color: var(--f1-red); color: white; padding: 4px 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-radius: 3px; display: inline-block; margin-bottom: 12px; }
@@ -51,33 +44,13 @@
     <div class="wrapper">
         <div class="ad-banner">HIRDETÉS HELYE (GOOGLE ADSENSE BANNER)</div>
         <div id="main-view">
-            <div class="news-card">
-                <div class="card-body">
-                    <span class="badge">Ferrari Rovat</span>
-                    <h2>Dráma Silverstone-ban: Leclerc nyert, Hamilton a Ferrari stratégáit bírálja</h2>
-                    <p>Bár Charles Leclerc győzelmet aratott a tegnapi Brit Nagydíjon, a Ferrari garázsának másik oldalán pattanásig feszültek az indulatok. Lewis Hamilton dühösen nyilatkozott a késői biztonsági autós fázis alatti elhibázott kerékcsere miatt...</p>
-                    <span class="meta">2026. július 9. | Kovács Gábor</span>
-                    <a href="#cikk1" class="read-more-btn">Teljes cikk elolvasása →</a>
-                </div>
-            </div>
+            
         </div>
-        <div id="cikk1" class="sub-page">
-            <a href="#" class="back-btn">← Vissza a főoldalra</a>
-            <div class="news-card">
-                <div class="card-body">
-                    <span class="badge">Ferrari Rovat - Exkluzív</span>
-                    <h1>Dráma Silverstone-ban: Leclerc nyert, Hamilton a Ferrari stratégáit bírálja</h1>
-                    <span class="meta">Publikálva: 2026. július 9. | Szerző: Kovács Gábor</span>
-                    <p>Bár Charles Leclerc győzelmet aratott a tegnapi Brit Nagydíjon, a Ferrari garázsának másik oldalán pattanásig feszültek az indulatok. Lewis Hamilton dühösen nyilatkozott a késői biztonsági autós fázis alatti elhibázott kerékcsere miatt, ami elütötte őt a kettős győzelemtől.</p>
-                </div>
-            </div>
-        </div>
+        
     </div>
     <footer>
-        <div class="footer-content">
-            <div><strong>© 2026 Grand Prix Insider.</strong> Minden jog fenntartva.</div>
-            <div class="disclaimer">Ez az oldal egy független hírportál. A Formula 1 és az F1 bejegyzett védjegyek.</div>
-        </div>
+        <div><strong>© 2026 Grand Prix Insider.</strong> Minden jog fenntartva.</div>
+        <div class="disclaimer">Ez az oldal egy független hírportál. A Formula 1 és az F1 bejegyzett védjegyek.</div>
     </footer>
 </body>
 </html>
