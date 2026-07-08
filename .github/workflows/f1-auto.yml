@@ -60,7 +60,7 @@ jobs:
                             <span class="badge">F1 ÉLŐ - Részletes nézet</span>
                             <h1>{title_hu}</h1>
                             <p>{desc_hu}</p>
-                            <p>Műszaki részletek, pilótanyilatkozatok és a silverstone-i paddock legfrissebb háttérinformációi hamarosan elérhetőek lesznek a helyszíni tudósítóink jóvoltából a Grand Prix Insider magazin felületén.</p>
+                            <p>Műszaki részletek, pilótanyilatkozatok és a paddock legfrissebb háttérinformációi hamarosan elérhetőek lesznek a helyszíni tudósítóink jóvoltából a Grand Prix Insider magazin felületén.</p>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@ jobs:
         with open("index.html", "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Pontosan behelyettesítjük a robot által generált tartalmat a sablonba
+        # Sziklaszilárd, tiszta szöveges csere, ami nem ütközik a CSS kapcsos zárójelekkel
         content = content.replace("<!-- CARDS -->", cards_html)
         content = content.replace("<!-- SUBPAGES -->", sub_pages_html)
 
@@ -86,6 +86,6 @@ jobs:
         git config --global user.name "F1 Robot"
         git config --global user.email "robot@grandprixinsider.hu"
         git add index.html
-        git commit -m "Automata F1 hirfrissites" || echo "Nincs uj"
+        git commit -m "Automata F1 hirfrissites szöveges cserével" || echo "Nincs uj"
         git pull --rebase origin main
         git push origin main
