@@ -12,7 +12,7 @@ jobs:
     - name: Kod letöltése
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 # Biztosítja, hogy a teljes tárhely elérhető legyen
+        fetch-depth: 0
 
     - name: Python beallitasa
       uses: actions/setup-python@v5
@@ -39,8 +39,16 @@ jobs:
         items = feed.entries[:5]
         for index, item in enumerate(items):
             try:
-                title_hu = translator.translate(item.title).replace('"', '&quot;').replace("'", "&#39;")
-                desc_hu = translator.translate(item.description).replace('"', '&quot;').replace("'", "&#39;")
+                # Biztonságos szöveg-kinyerés és fordítás
+                raw_title = item.title if hasattr(item, 'title') else 'F1 Hir'
+                raw_desc = item.description if hasattr(item, 'description') else 'Friss paddock informaciok.'
+                
+                title_hu = translator.translate(raw_title)
+                desc_hu = translator.translate(raw_desc)
+                
+                # Szigorú karakter-tisztítás a HTML ütközések ellen
+                title_hu = title_hu.replace('"', '&quot;').replace("'", "&#39;").replace("<", "&lt;").replace(">", "&gt;")
+                desc_hu = desc_hu.replace('"', '&quot;').replace("'", "&#39;").replace("<", "&lt;").replace(">", "&gt;")
                 
                 cards_html += f"""
                 <div class="news-card">
@@ -136,5 +144,5 @@ jobs:
         git config --global user.name "F1 Robot"
         git config --global user.email "robot@grandprixinsider.hu"
         git add index.html
-        git commit -m "Kényszerített éles hírek beillesztése" || echo "Nincs valtozas"
-        git push origin main --force # Kényszerített feltolás az ütközések ellen
+        git commit -m "Kényszerített éles hírek beillesztése letisztított szöveggel" || echo "Nincs valtozas"
+        git push origin main --force
