@@ -44,22 +44,22 @@ jobs:
                 <div class="news-card">
                     <div class="card-body">
                         <span class="badge">F1 ÉLŐ PORTÁL</span>
-                        <h2>{{title_hu}}</h2>
-                        <p>{{desc_hu}}</p>
+                        <h2>{title_hu}</h2>
+                        <p>{desc_hu}</p>
                         <span class="meta">Automatikus frissítés</span>
-                        <a href="#cikk{{index}}" class="read-more-btn">Teljes cikk elolvasása →</a>
+                        <a href="#cikk{index}" class="read-more-btn">Teljes cikk elolvasása →</a>
                     </div>
                 </div>
                 """
                 
                 sub_pages_html += f"""
-                <div id="cikk{{index}}" class="sub-page">
+                <div id="cikk{index}" class="sub-page">
                     <a href="#" class="back-btn">← Vissza a főoldalra</a>
                     <div class="news-card">
                         <div class="card-body">
                             <span class="badge">F1 ÉLŐ - Részletes nézet</span>
-                            <h1>{{title_hu}}</h1>
-                            <p>{{desc_hu}}</p>
+                            <h1>{title_hu}</h1>
+                            <p>{desc_hu}</p>
                             <p>Részletes technikai elemzések, nyilatkozatok és helyszíni telemetriai adatok hamarosan elérhetőek lesznek a helyszíni tudósítóink jóvoltából a Grand Prix Insider magazin felületén.</p>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ jobs:
                 #cikk0:target, #cikk1:target, #cikk2:target, #cikk3:target, #cikk4:target {{ display: block; }}
                 .news-card {{ background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }}
                 .card-body {{ padding: 25px; }}
-                .badge {{ background-color: var(--f1-red); color: white; padding: 4px 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-radius: 3px; display: inline-block; margin-bottom: 12px; }}
+                .badge {{ background-color: var(--f1-red); color: white; padding: 4px 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-radius: 3px; display: inline-block; width: max-content; margin-bottom: 12px; }}
                 .read-more-btn {{ display: inline-block; background-color: var(--f1-red); color: white; text-decoration: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; margin-top: 15px; text-transform: uppercase; font-size: 14px; }}
                 .back-btn {{ display: inline-block; background-color: #242936; color: white; text-decoration: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; margin-bottom: 20px; }}
                 h1 {{ font-size: 32px; margin-bottom: 15px; }}
