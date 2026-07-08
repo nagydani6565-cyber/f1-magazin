@@ -22,7 +22,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install feedparser deep-translator
 
-    - name: F1 Hirek letoltese es beillesztese
+    - name: Teljes HTML oldal legenerálása a felhőben
       run: |
         python - <<EOF
         import feedparser
@@ -68,17 +68,66 @@ jobs:
             except:
                 continue
 
-        # Beolvassuk az üres index.html-t
-        with open("index.html", "r", encoding="utf-8") as f:
-            content = f.read()
+        # A robot magának generálja le a teljes struktúrát, nem kell hozzá sablon
+        full_html = f"""<!DOCTYPE html>
+        <html lang="hu">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Grand Prix Insider | Professzionális F1 Hírportál</title>
+            <style>
+                :root {{ --bg-color: #0c0d12; --card-bg: #161920; --text-main: #ffffff; --text-muted: #a0a5b5; --f1-red: #FF1801; --border: #242936; }}
+                * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+                body {{ background-color: var(--bg-color); color: var(--text-main); font-family: system-ui, sans-serif; line-height: 1.6; font-size: 17px; }}
+                header {{ background-color: #000000; border-bottom: 4px solid var(--f1-red); position: sticky; top: 0; z-index: 1000; }}
+                .nav-container {{ max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }}
+                .logo {{ font-size: 24px; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -1px; }}
+                .logo span {{ color: var(--f1-red); }}
+                .wrapper {{ max-width: 800px; margin: 30px auto; padding: 0 20px; }}
+                .ad-banner {{ background: #0b0c10; border: 1px dashed #334155; padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px; margin-bottom: 30px; font-weight: bold; border-radius: 4px; }}
+                .sub-page {{ display: none; }}
+                #main-view {{ display: block; }}
+                body:has(#cikk0:target) #main-view {{ display: none; }}
+                body:has(#cikk1:target) #main-view {{ display: none; }}
+                body:has(#cikk2:target) #main-view {{ display: none; }}
+                body:has(#cikk3:target) #main-view {{ display: none; }}
+                body:has(#cikk4:target) #main-view {{ display: none; }}
+                #cikk0:target, #cikk1:target, #cikk2:target, #cikk3:target, #cikk4:target {{ display: block; }}
+                .news-card {{ background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 25px; }}
+                .card-body {{ padding: 25px; }}
+                .badge {{ background-color: var(--f1-red); color: white; padding: 4px 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-radius: 3px; display: inline-block; margin-bottom: 12px; }}
+                .read-more-btn {{ display: inline-block; background-color: var(--f1-red); color: white; text-decoration: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; margin-top: 15px; text-transform: uppercase; font-size: 14px; }}
+                .back-btn {{ display: inline-block; background-color: #242936; color: white; text-decoration: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; margin-bottom: 20px; }}
+                h1 {{ font-size: 32px; margin-bottom: 15px; }}
+                h2 {{ font-size: 24px; margin-bottom: 15px; line-height: 1.3; }}
+                p {{ color: var(--text-muted); margin-bottom: 20px; text-align: justify; }}
+                .meta {{ font-size: 13px; color: #657585; font-weight: bold; margin-bottom: 10px; display: block; }}
+                footer {{ background-color: #000000; border-top: 1px solid var(--border); padding: 40px 20px; text-align: center; margin-top: 60px; }}
+                .disclaimer {{ font-size: 12px; color: #555; max-width: 600px; margin: 15px auto 0 auto; }}
+            </style>
+        </head>
+        <body>
+            <header>
+                <div class="nav-container">
+                    <a href="#" class="logo">GRAND PRIX<span>INSIDER</span></a>
+                </div>
+            </header>
+            <div class="wrapper">
+                <div class="ad-banner">HIRDETÉS HELYE (GOOGLE ADSENSE BANNER)</div>
+                <div id="main-view">
+                    {cards_html}
+                </div>
+                {sub_pages_html}
+            </div>
+            <footer>
+                <div><strong>© 2026 Grand Prix Insider.</strong> Minden jog fenntartva.</div>
+                <div class="disclaimer">Ez az oldal egy független hírportál. A Formula 1 és az F1 bejegyzett védjegyek.</div>
+            </footer>
+        </body>
+        </html>"""
 
-        # Sziklaszilárd, tiszta szöveges csere, ami nem ütközik a CSS kapcsos zárójelekkel
-        content = content.replace("<!-- CARDS -->", cards_html)
-        content = content.replace("<!-- SUBPAGES -->", sub_pages_html)
-
-        # Elmentjük a kész, feltöltött index.html-t
         with open("index.html", "w", encoding="utf-8") as f:
-            f.write(content)
+            f.write(full_html)
         EOF
 
     - name: Mentes a tarhelyre
@@ -86,6 +135,6 @@ jobs:
         git config --global user.name "F1 Robot"
         git config --global user.email "robot@grandprixinsider.hu"
         git add index.html
-        git commit -m "Automata F1 hirfrissites szöveges cserével" || echo "Nincs uj"
+        git commit -m "Teljes HTML ujragyartas hiba nelkul" || echo "Nincs uj"
         git pull --rebase origin main
         git push origin main
