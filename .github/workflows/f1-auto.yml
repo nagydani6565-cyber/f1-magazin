@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Kod letöltése
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 # FRISSÍTVE V4-RE (NODE 24 KOMPATIBILIS)
 
     - name: Python beallitasa
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5 # FRISSÍTVE V5-RE (NODE 24 KOMPATIBILIS)
       with:
         python-version: '3.x'
 
@@ -134,5 +134,5 @@ jobs:
         git config --global user.name "F1 Robot"
         git config --global user.email "robot@grandprixinsider.hu"
         git add index.html
-        git commit -m "Automata F1 hirfrissites" || echo "Nincs uj"
+        git commit -m "Automata F1 hifrissites modernizalt rendszerrel" || echo "Nincs uj"
         git push
