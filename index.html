@@ -26,15 +26,15 @@
         .grid-view { display: grid; grid-template-columns: 1fr; gap: 25px; }
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s; }
         .card:hover { transform: translateY(-3px); border-color: var(--accent); }
-        .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-        .badge { background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 3px; display: inline-block; width: max-content; margin-bottom: 10px; text-transform: uppercase; }
-        h2 { font-size: 20px; margin-bottom: 10px; line-height: 1.3; }
-        .desc { color: var(--text-muted); font-size: 15px; margin-bottom: 15px; flex-grow: 1; }
-        .btn { background: var(--accent); color: #fff; text-decoration: none; padding: 8px 16px; text-align: center; font-weight: bold; border-radius: 4px; font-size: 14px; cursor: pointer; border: none; align-self: flex-start; }
+        .card-body { padding: 25px; display: flex; flex-direction: column; flex-grow: 1; }
+        .badge { background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 3px; display: inline-block; width: max-content; margin-bottom: 12px; text-transform: uppercase; }
+        h2 { font-size: 22px; margin-bottom: 12px; line-height: 1.3; }
+        .desc { color: var(--text-muted); font-size: 16px; margin-bottom: 20px; flex-grow: 1; }
+        .btn { background: var(--accent); color: #fff; text-decoration: none; padding: 10px 20px; text-align: center; font-weight: bold; border-radius: 4px; font-size: 14px; cursor: pointer; border: none; align-self: flex-start; text-transform: uppercase; }
         
-        .single-view { display: none; background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 8px; }
-        .back-btn { background: #334155; color: #fff; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: inline-block; margin-bottom: 20px; font-weight: bold; }
-        .full-text { font-size: 18px; color: #e2e8f0; margin-top: 20px; text-align: justify; }
+        .single-view { display: none; background: var(--card); border: 1px solid var(--border); padding: 35px; border-radius: 8px; }
+        .back-btn { background: #334155; color: #fff; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: inline-block; margin-bottom: 25px; font-weight: bold; font-size: 14px; }
+        .full-text { font-size: 18px; color: #e2e8f0; margin-top: 25px; text-align: justify; }
 
         footer { background: #000; text-align: center; padding: 30px 20px; margin-top: 60px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); }
     </style>
@@ -69,9 +69,9 @@
     </footer>
 
     <script>
-        // A te konkrét Google Táblázatod titkos azonosítója fixen beépítve!
+        // A te táblázatod pontos és ellenőrzött azonosítója
         const SHEET_ID = "1Pnz07nMhYg4eamfIRvhus6DRunAADnGLla2IGOyeaYw";
-        const SHEET_URL = `https://google.com{SHEET_ID}/gviz/tq?tqx=out:json`;
+        const SHEET_URL = "https://google.com" + SHEET_ID + "/gviz/tq?tqx=out:json";
 
         let mentettHirek = [];
 
@@ -81,7 +81,7 @@
                 const response = await fetch(SHEET_URL);
                 const rawText = await response.text();
                 
-                // Kimásoljuk a tiszta adatot a Google válaszából
+                // Kimásoljuk a tiszta JSON-t a Google válaszából
                 const jsonText = rawText.match(/google\.visualization\.Query\.setResponse\(([\s\S\x00-\x7F]+)\);/);
                 const data = JSON.parse(jsonText[1]);
                 const rows = data.table.rows;
@@ -90,12 +90,12 @@
                 mentettHirek = [];
 
                 if (!rows || rows.length === 0) {
-                    gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted)">A táblázatod üres. Írd be a hírt a 2. sorba!</p>';
+                    gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted)">A táblázatod elérhető, de még teljesen üres. Írd be a hírt a 2. sorba!</p>';
                     return;
                 }
 
-                rows.forEach((row, index) => {
-                    // Szigorú cellaellenőrzés az oszlopok elcsúszása ellen (0=cím, 1=bevezető, 2=szöveg, 3=kategória)
+                rows.forEach((row) => {
+                    // Biztonságos oszlop-párosítás (A=0: cím, B=1: bevezető, C=2: szöveg, D=3: kategória)
                     if (row.c && row.c.length >= 2) {
                         const hír = {
                             cim: (row.c[0] && row.c[0].v) ? row.c[0].v.toString() : 'Cím nélkül',
