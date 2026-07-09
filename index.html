@@ -52,7 +52,7 @@
 
         <!-- LISTA NÉZET -->
         <div id="grid-page" class="grid-view">
-            <p style="text-align:center; width:100%; color:var(--text-muted);">Hírek élő szinkronizálása a Google Táblázatból...</p>
+            <p style="text-align:center; width:100%; color:var(--text-muted);">Hírek betöltése a paddockból...</p>
         </div>
 
         <!-- CIKK KIFEJTŐ NÉZET -->
@@ -69,39 +69,68 @@
     </footer>
 
     <script>
-        // A te táblázatod pontos és ellenőrzött azonosítója
-        const SHEET_ID = "1Pnz07nMhYg4eamfIRvhus6DRunAADnGLla2IGOyeaYw";
-        const SHEET_URL = "https://google.com" + SHEET_ID + "/gviz/tq?tqx=out:json";
+        // BEILLESZTVE A TE SAJÁT, ÉLES WEBRE PUBLIKÁLT TÁBLÁZATOD KÓDJA!
+        const SHEET_URL = "https://google.com";
 
         let mentettHirek = [];
+
+        // Golyóálló, tiszta CSV dekóder program az idézőjelek és belső sortörések kezelésére
+        function parseGoogleCSV(text) {
+            let lines = [];
+            let row = [""];
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                let current = text[i];
+                let next = text[i+1];
+
+                if (current === '"') {
+                    if (inQuotes && next === '"') { 
+                        row[row.length - 1] += '"'; i++; 
+                    } else { 
+                        inQuotes = !inQuotes; 
+                    }
+                } else if (current === ',' && !inQuotes) {
+                    row.push('');
+                } else if ((current === '\r' || current === '\n') && !inQuotes) {
+                    if (current === '\r' && next === '\n') { i++; }
+                    lines.push(row);
+                    row = [''];
+                } else {
+                    row[row.length - 1] += current;
+                }
+            }
+            if (row.length > 1 || (row.length === 1 && row !== '')) {
+                lines.push(row);
+            }
+            return lines.slice(1); // Első sor (fejléc) levágása
+        }
 
         async function hirekBetoltese() {
             const gridPage = document.getElementById('grid-page');
             try {
                 const response = await fetch(SHEET_URL);
-                const rawText = await response.text();
+                if (!response.ok) throw new Error("Hálózati hiba");
                 
-                // Kimásoljuk a tiszta JSON-t a Google válaszából
-                const jsonText = rawText.match(/google\.visualization\.Query\.setResponse\(([\s\S\x00-\x7F]+)\);/);
-                const data = JSON.parse(jsonText[1]);
-                const rows = data.table.rows;
+                const rawText = await response.text();
+                const parsedRows = parseGoogleCSV(rawText);
 
                 gridPage.innerHTML = '';
                 mentettHirek = [];
 
-                if (!rows || rows.length === 0) {
-                    gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted)">A táblázatod elérhető, de még teljesen üres. Írd be a hírt a 2. sorba!</p>';
+                if (parsedRows.length === 0) {
+                    gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted)">A táblázatod üres vagy nem olvasható.</p>';
                     return;
                 }
 
-                rows.forEach((row) => {
-                    // Biztonságos oszlop-párosítás (A=0: cím, B=1: bevezető, C=2: szöveg, D=3: kategória)
-                    if (row.c && row.c.length >= 2) {
+                parsedRows.forEach((row) => {
+                    // Cella ellenőrzés (0=cim, 1=bevezeto, 2=szoveg, 3=kategoria)
+                    if (row && row.length >= 3) {
                         const hír = {
-                            cim: (row.c[0] && row.c[0].v) ? row.c[0].v.toString() : 'Cím nélkül',
-                            bevezeto: (row.c[1] && row.c[1].v) ? row.c[1].v.toString() : '',
-                            szoveg: (row.c[2] && row.c[2].v) ? row.c[2].v.toString() : '',
-                            kategoria: (row.c[3] && row.c[3].v) ? row.c[3].v.toString() : 'F1'
+                            cim: row[0] ? row[0].trim() : 'Cím nélkül',
+                            bevezeto: row[1] ? row[1].trim() : '',
+                            szoveg: row[2] ? row[2].trim() : '',
+                            kategoria: row[3] ? row[3].trim() : 'F1'
                         };
                         
                         mentettHirek.push(hír);
@@ -120,8 +149,12 @@
                     }
                 });
 
+                if (mentettHirek.length === 0) {
+                    gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted)">Nincs beolvasható cikk. Ellenőrizd a táblázat soraidat!</p>';
+                }
+
             } catch (error) {
-                gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--accent)">Hiba történt a Google Táblázat beolvasásakor. Győződj meg róla, hogy a megosztásnál beállítottad: "Bárki, aki rendelkezik a linkkel"!</p>';
+                gridPage.innerHTML = '<p style="text-align:center; width:100%; color:var(--accent)">Hiba történt a Google Táblázat szinkronizálásakor. Frissítsd az oldalt kicsit később!</p>';
             }
         }
 
@@ -131,7 +164,7 @@
             document.getElementById('single-page').style.display = 'block';
             document.getElementById('single-badge').innerText = hír.kategoria;
             document.getElementById('single-title').innerText = hír.cim;
-            document.getElementById('single-text').innerHTML = hír.szoveg ? hír.szoveg.toString().replace(/\n/g, '<br><br>') : '';
+            document.getElementById('single-text').innerHTML = hír.szoveg.replace(/\n/g, '<br><br>');
             window.scrollTo(0,0);
         }
 
